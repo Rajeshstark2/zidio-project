@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import {
@@ -21,7 +21,11 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  // Get the redirect path from location state, default to home page
+  const from = (location.state as { from?: string })?.from || '/';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +49,7 @@ const SignIn: React.FC = () => {
       if (response.ok) {
         login(data.user, data.token);
         toast.success(data.message || 'Signed in successfully!');
-        navigate('/');
+        navigate(from);
       } else {
         toast.error(data.message || 'Failed to sign in.');
       }

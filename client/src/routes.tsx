@@ -10,6 +10,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import BlogDetail from './pages/BlogDetail';
 import MyBlogs from './pages/MyBlogs';
+import EditBlog from './pages/EditBlog';
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const AppRoutes = () => (
         <Route path="/signup" element={<SignUp />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/my-blogs" element={<MyBlogs />} />
+        <Route path="/edit/:id" element={<EditBlog />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>
