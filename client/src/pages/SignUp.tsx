@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 
 const SignUp: React.FC = () => {
@@ -13,13 +14,23 @@ const SignUp: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [securityQuestion, setSecurityQuestion] = useState('');
+  const [securityAnswer, setSecurityAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  const securityQuestions = [
+    "What was your first pet's name?",
+    "What is your mother's maiden name?",
+    "What city were you born in?",
+    "What is your favorite book?",
+    "What was the name of your first school?"
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim() || !securityQuestion || !securityAnswer.trim()) {
       toast.error('Please fill in all fields');
       return;
     }
@@ -40,7 +51,13 @@ const SignUp: React.FC = () => {
       const response = await fetch('http://localhost:5000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          password,
+          securityQuestion,
+          securityAnswer 
+        }),
       });
 
       const data = await response.json();
@@ -110,6 +127,30 @@ const SignUp: React.FC = () => {
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="securityQuestion">Security Question</Label>
+                <Select value={securityQuestion} onValueChange={setSecurityQuestion}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a security question" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {securityQuestions.map((question) => (
+                      <SelectItem key={question} value={question}>
+                        {question}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="securityAnswer">Security Answer</Label>
+                <Input 
+                  id="securityAnswer"
+                  value={securityAnswer}
+                  onChange={(e) => setSecurityAnswer(e.target.value)}
                   required
                 />
               </div>
