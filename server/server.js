@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Set default values for environment variables
 process.env.PORT = process.env.PORT || '8000';
-process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Harshavardhan:Harsha%4012%23@cluster0.axim5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+process.env.MONGODB_URI = process.env.MONGODB_URI || 'your-mogodb-url';
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-2025-zidio-project';
 
 // Debug: Log environment variables
