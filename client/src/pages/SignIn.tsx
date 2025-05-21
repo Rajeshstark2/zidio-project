@@ -1,9 +1,15 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -15,29 +21,34 @@ const SignIn: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!email.trim() || !password.trim()) {
       toast.error('Please fill in all fields');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      // Here we would normally call an API to authenticate
-      // For now, we'll just simulate an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Mock successful login
-      toast.success('Signed in successfully!');
-      
-      // Redirect to explore page
-      navigate('/blogs');
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message || 'Signed in successfully!');
+        navigate('/blogs');
+      } else {
+        toast.error(data.message || 'Failed to sign in.');
+      }
     } catch (error) {
-      toast.error('Failed to sign in. Please check your credentials.');
-      console.error('Error signing in:', error);
+      toast.error('Server error. Try again later.');
+      console.error('Login error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -56,13 +67,14 @@ const SignIn: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input 
+                <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
+                  autoComplete="email"
+                  aria-label="Email"
                 />
               </div>
               <div className="space-y-2">
@@ -72,13 +84,14 @@ const SignIn: React.FC = () => {
                     Forgot password?
                   </Link>
                 </div>
-                <Input 
+                <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
+                  autoComplete="current-password"
+                  aria-label="Password"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>

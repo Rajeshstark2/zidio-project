@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -19,37 +18,42 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       toast.error('Please fill in all fields');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    
+
     if (password.length < 8) {
       toast.error('Password must be at least 8 characters long');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      // Here we would normally call an API to register a new user
-      // For now, we'll just simulate an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Mock successful registration
-      toast.success('Account created successfully!');
-      
-      // Redirect to sign in page
-      navigate('/signin');
+      const response = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message || 'Account created successfully!');
+        navigate('/signin');
+      } else {
+        toast.error(data.message || 'Failed to create account.');
+      }
     } catch (error) {
-      toast.error('Failed to create account. Please try again.');
-      console.error('Error signing up:', error);
+      toast.error('Server error. Please try again later.');
+      console.error('Signup error:', error);
     } finally {
       setIsSubmitting(false);
     }
