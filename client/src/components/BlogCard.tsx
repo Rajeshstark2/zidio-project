@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -28,9 +27,13 @@ const BlogCard: React.FC<BlogCardProps> = ({
     <article className="card-blogsy overflow-hidden flex flex-col h-full">
       <Link to={`/blog/${slug}`} className="block overflow-hidden rounded-lg mb-4">
         <img
-          src={coverImage}
+          src={coverImage || '/placeholder.svg'}
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+          onError={(e) => {
+            console.error('Image failed to load:', coverImage);
+            e.currentTarget.src = '/placeholder.svg';
+          }}
         />
       </Link>
       <div className="flex-1 flex flex-col">

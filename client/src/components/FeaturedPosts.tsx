@@ -1,53 +1,73 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import BlogCard from './BlogCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
-// Sample blog data
-const featuredBlogs = [
-  {
-    id: '1',
-    title: 'How to Become a Better Writer in 30 Days',
-    excerpt: 'Discover the daily habits and practices that will dramatically improve your writing skills and help you find your unique voice.',
-    coverImage: '/placeholder.svg',
-    author: {
-      name: 'Emma Roberts',
-      avatar: '/placeholder.svg',
-    },
-    date: 'May 5, 2025',
-    readTime: '8 min read',
-    slug: 'how-to-become-better-writer',
-  },
-  {
-    id: '2',
-    title: 'The Future of Content Creation with AI Tools',
-    excerpt: 'Explore how artificial intelligence is transforming the landscape of content creation and what it means for writers and creators.',
-    coverImage: '/placeholder.svg',
-    author: {
-      name: 'Michael Chen',
-      avatar: '/placeholder.svg',
-    },
-    date: 'May 3, 2025',
-    readTime: '6 min read',
-    slug: 'future-content-creation-ai',
-  },
-  {
-    id: '3',
-    title: 'Why Deep Work Matters More Than Ever',
-    excerpt: 'In a world full of distractions, the ability to focus deeply is becoming a rare and valuable skill. Learn how to master it.',
-    coverImage: '/placeholder.svg',
-    author: {
-      name: 'Sarah Johnson',
-      avatar: '/placeholder.svg',
-    },
-    date: 'April 29, 2025',
-    readTime: '10 min read',
-    slug: 'deep-work-matters',
-  },
-];
+interface Blog {
+  _id: string;
+  title: string;
+  content: string;
+  author: {
+    _id: string;
+    name: string;
+  };
+  tags: string[];
+  createdAt: string;
+  imageUrl?: string;
+}
 
 const FeaturedPosts: React.FC = () => {
+  const [featuredBlogs, setFeaturedBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFeaturedBlogs();
+  }, []);
+
+  const fetchFeaturedBlogs = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/blogs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch blogs');
+      }
+      const data = await response.json();
+      console.log('Fetched blogs:', data); // Debug log
+      // Get the 3 most recent blogs
+      setFeaturedBlogs(data.slice(0, 3));
+    } catch (error) {
+      console.error('Error fetching featured blogs:', error);
+      toast.error('Failed to load featured blogs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const calculateReadTime = (content: string) => {
+    const wordsPerMinute = 200;
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / wordsPerMinute);
+    return `${minutes} min read`;
+  };
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container-blogsy">
+          <div className="text-center">Loading featured articles...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 bg-white">
       <div className="container-blogsy">
@@ -58,24 +78,36 @@ const FeaturedPosts: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredBlogs.map((blog) => (
-            <BlogCard
-              key={blog.id}
-              title={blog.title}
-              excerpt={blog.excerpt}
-              coverImage={blog.coverImage}
-              author={blog.author}
-              date={blog.date}
-              readTime={blog.readTime}
-              slug={blog.slug}
-            />
-          ))}
-        </div>
+        {featuredBlogs.length === 0 ? (
+          <div className="text-center text-blogsy-charcoal-light py-8">
+            No articles yet. Be the first to write one!
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredBlogs.map((blog) => (
+              <BlogCard
+                key={blog._id}
+                title={blog.title}
+                excerpt={blog.content}
+                coverImage={blog.imageUrl || '/placeholder.svg'}
+                author={{
+                  name: blog.author?.name || 'Unknown',
+                  avatar: '/placeholder.svg'
+                }}
+                date={formatDate(blog.createdAt)}
+                readTime={calculateReadTime(blog.content)}
+                slug={blog._id}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-12 text-center">
-          <Button className="bg-white text-blogsy-teal border border-blogsy-teal hover:bg-blogsy-teal hover:text-white">
-            Load more articles
+          <Button 
+            className="bg-white text-blogsy-teal border border-blogsy-teal hover:bg-blogsy-teal hover:text-white"
+            asChild
+          >
+            <Link to="/blogs">View all articles</Link>
           </Button>
         </div>
       </div>

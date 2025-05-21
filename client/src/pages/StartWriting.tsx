@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,15 +8,32 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 const StartWriting: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated, token } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to write a blog post');
+      navigate('/signin', { state: { from: '/write' } });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      toast.error('Please sign in to write a blog post');
+      navigate('/signin', { state: { from: '/write' } });
+      return;
+    }
     
     if (!title.trim() || !content.trim()) {
       toast.error('Please fill in both title and content fields.');
@@ -25,16 +43,34 @@ const StartWriting: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Here we would normally call an API to save the blog post
-      // For now, we'll just simulate an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch('http://localhost:5000/api/blogs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          tags,
+          imageUrl: imageUrl.trim() || undefined
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create blog post');
+      }
+
+      const data = await response.json();
       
       // Reset the form
       setTitle('');
       setContent('');
       setTags('');
+      setImageUrl('');
       
       toast.success('Your post has been published successfully!');
+      navigate('/blogs'); // Redirect to blogs page
     } catch (error) {
       toast.error('Failed to publish your post. Please try again.');
       console.error('Error publishing post:', error);
@@ -42,6 +78,11 @@ const StartWriting: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  // If not authenticated, don't render the form
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -86,6 +127,20 @@ const StartWriting: React.FC = () => {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                 />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="imageUrl">Cover Image URL (optional)</Label>
+                <Input 
+                  id="imageUrl"
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                />
+                <p className="text-sm text-blogsy-charcoal-light">
+                  Enter a URL for your blog's cover image. If left empty, a default image will be used.
+                </p>
               </div>
               
               <div className="flex justify-end gap-4">

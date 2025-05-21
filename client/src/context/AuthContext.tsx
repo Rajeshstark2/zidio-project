@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
 }
@@ -28,15 +28,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedToken = localStorage.getItem('token');
     
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      // Map id to _id if needed
+      const userWithId = parsedUser._id ? parsedUser : { ...parsedUser, _id: parsedUser.id };
+      setUser(userWithId);
       setToken(storedToken);
     }
   }, []);
 
   const login = (userData: User, authToken: string) => {
-    setUser(userData);
+    // Map id to _id if needed
+    const userWithId = userData._id ? userData : { ...userData, _id: (userData as any).id };
+    setUser(userWithId);
     setToken(authToken);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userWithId));
     localStorage.setItem('token', authToken);
   };
 

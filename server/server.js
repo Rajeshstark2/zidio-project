@@ -17,6 +17,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const blogRoutes = require('./routes/blogs');
 
 const app = express();
 
@@ -34,6 +35,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
