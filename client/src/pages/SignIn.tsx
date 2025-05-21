@@ -14,12 +14,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,8 +43,9 @@ const SignIn: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
+        login(data.user, data.token);
         toast.success(data.message || 'Signed in successfully!');
-        navigate('/blogs');
+        navigate('/');
       } else {
         toast.error(data.message || 'Failed to sign in.');
       }
