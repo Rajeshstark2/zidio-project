@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -110,10 +111,18 @@ const EditBlog: React.FC = () => {
     );
   }
 
+=======
+import React from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+const EditBlog: React.FC = () => {
+>>>>>>> 4c346d197a3c837735338faf67828bd20ebf8bea
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow container-blogsy py-8">
+<<<<<<< HEAD
         <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-blogsy-charcoal">Edit Blog</CardTitle>
@@ -178,6 +187,10 @@ const EditBlog: React.FC = () => {
             </form>
           </CardContent>
         </Card>
+=======
+        <h1 className="text-3xl font-bold text-blogsy-charcoal mb-4">Edit Blog (Coming Soon)</h1>
+        <p className="text-blogsy-charcoal-light">This page will allow you to edit your blog post in the future.</p>
+>>>>>>> 4c346d197a3c837735338faf67828bd20ebf8bea
       </main>
       <Footer />
     </div>

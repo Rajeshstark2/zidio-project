@@ -9,7 +9,11 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
+<<<<<<< HEAD
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+=======
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zidio-super-secret-jwt-key-2024');
+>>>>>>> 4c346d197a3c837735338faf67828bd20ebf8bea
     const user = await User.findById(decoded.userId);
 
     if (!user) {

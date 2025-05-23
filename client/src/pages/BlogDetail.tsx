@@ -36,7 +36,11 @@ const BlogDetail: React.FC = () => {
       setLoading(true);
       setError(null);
       
+<<<<<<< HEAD
       const response = await fetch(`http://localhost:8000/api/blogs/${slug}`);
+=======
+      const response = await fetch(`http://localhost:5000/api/blogs/${slug}`);
+>>>>>>> 4c346d197a3c837735338faf67828bd20ebf8bea
       
       if (!response.ok) {
         throw new Error('Failed to fetch blog');

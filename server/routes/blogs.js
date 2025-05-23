@@ -120,6 +120,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Update a blog
 router.put('/:id', auth, async (req, res) => {
   try {
@@ -154,4 +155,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
+=======
+>>>>>>> 4c346d197a3c837735338faf67828bd20ebf8bea
 module.exports = router; 
