@@ -3,8 +3,12 @@ require('dotenv').config();
 
 // Set default values for environment variables
 process.env.PORT = process.env.PORT || '8000';
-process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb-url';
-process.env.JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-2025-zidio-project';
+
+// MongoDB Connection String Format:
+// mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
+// Example: mongodb+srv://myuser:mypassword@cluster0.mongodb.net/zidio?retryWrites=true&w=majority
+const MONGODB_URI = process.env.MONGODB_URI;
+process.env.JWT_SECRET = process.env.JWT_SECRET;
 
 // Debug: Log environment variables
 console.log('Environment Variables:', {
@@ -26,7 +30,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// API configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -35,5 +36,22 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const apiEndpoints = {
+  // Auth endpoints
+  register: `${API_BASE_URL}/register`,
+  login: `${API_BASE_URL}/login`,
+  forgotPassword: {
+    verifyEmail: `${API_BASE_URL}/forgot-password/verify-email`,
+    verifyAnswer: `${API_BASE_URL}/forgot-password/verify-answer`,
+    reset: `${API_BASE_URL}/forgot-password/reset`
+  },
+  
+  // Blog endpoints
+  blogs: `${API_BASE_URL}/blogs`,
+  userBlogs: (userId: string) => `${API_BASE_URL}/blogs/user/${userId}`,
+  blogById: (id: string) => `${API_BASE_URL}/blogs/${id}`,
+  blogBySlug: (slug: string) => `${API_BASE_URL}/blogs/${slug}`
+};
 
 export default api; 

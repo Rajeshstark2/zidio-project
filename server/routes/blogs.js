@@ -120,4 +120,38 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// Update a blog
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const { title, content, tags, imageUrl } = req.body;
+    const blog = await Blog.findById(req.params.id);
+    
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    
+    // Only allow the author to update
+    if (blog.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to update this blog' });
+    }
+    
+    // Update blog fields
+    blog.title = title;
+    blog.content = content;
+    blog.tags = tags;
+    blog.imageUrl = imageUrl;
+    
+    await blog.save();
+    
+    const updatedBlog = await Blog.findById(req.params.id)
+      .populate('author', 'name')
+      .populate('comments.user', 'name');
+    
+    res.json(updatedBlog);
+  } catch (error) {
+    console.error('Error updating blog:', error);
+    res.status(500).json({ message: 'Error updating blog' });
+  }
+});
+
 module.exports = router; 

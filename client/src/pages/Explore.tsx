@@ -43,7 +43,7 @@ const Explore: React.FC = () => {
       setError(null);
       console.log('Fetching blogs...');
       
-      const response = await fetch('http://localhost:5000/api/blogs');
+      const response = await fetch('http://localhost:8000/api/blogs');
       console.log('Response status:', response.status);
       
       if (!response.ok) {

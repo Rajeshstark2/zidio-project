@@ -35,7 +35,7 @@ const MyBlogs: React.FC = () => {
   const fetchMyBlogs = async () => {
     try {
       setLoading(true);
-      const url = `http://localhost:5000/api/blogs/user/${user?._id}`;
+      const url = `http://localhost:8000/api/blogs/user/${user?._id}`;
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -74,7 +74,7 @@ const MyBlogs: React.FC = () => {
   const handleDelete = async (blogId: string) => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${blogId}`, {
+      const response = await fetch(`http://localhost:8000/api/blogs/${blogId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -170,7 +170,7 @@ const MyBlogs: React.FC = () => {
                 </CardContent>
                 <CardFooter className="pt-4 border-t flex gap-2">
                   <Button asChild className="w-full">
-                    <Link to={`/blog/${blog._id}`}>View Blog</Link>
+                    <Link to={`/blogs/${blog._id}`}>View Blog</Link>
                   </Button>
                   <Button variant="outline" className="w-full" onClick={() => navigate(`/edit/${blog._id}`)}>
                     Edit

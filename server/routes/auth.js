@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || 'zidio-super-secret-jwt-key-2024';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register Route
 router.post('/register', async (req, res) => {
